@@ -1,5 +1,7 @@
 #pragma once
 
+/// @defgroup libc libc
+/// @{
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,11 +13,20 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #endif  // LINUX
+        /// @}
 
-extern int main(int argc, char *argv[]);
-extern void arg(int argc, char *argv);
+/// @defgroup main main
+/// @{
+extern int main(int argc, char *argv[]);  ///< POSIX entry point
+extern void arg(int argc, char *argv);    ///< print command line argument
 
-extern void lexer(char *p, char *pe);
-extern char* yyfile;
-extern size_t yyline;
+/// @}
+
+/// @defgroup parser parser
+/// @{
+extern void lexer(char *p, char *pe);  ///< lexer /ragel/
+extern char *yyfile;                   ///< current file name
+extern size_t yyline;                  ///< current line number
+extern int dec(char *ts, char *te);    ///< sublexer for decimal integers
 #include "byte.lemon.hpp"
+/// @}

@@ -3,18 +3,11 @@
 %%{
     machine lexer;
     
-    action emit_num { 
-        char num[0x10];
-        int len = te-ts;
-        memcpy(num, ts, len);
-        num[len] = 0;
-        Parse(parser, NUMBER, atoi(num), 0);
-    }
-
-    action emit_add { Parse(parser, ADD, 0, 0); }
-    action emit_sub { Parse(parser, SUB, 0, 0); }
-    action emit_mul { Parse(parser, MUL, 0, 0); }
-    action emit_div { Parse(parser, DIV, 0, 0); }
+    action emit_num { parse(yyp, NUM, dec(ts,te), 0); }
+    action emit_add { parse(yyp, ADD, 0         , 0); }
+    action emit_sub { parse(yyp, SUB, 0         , 0); }
+    action emit_mul { parse(yyp, MUL, 0         , 0); }
+    action emit_div { parse(yyp, DIV, 0         , 0); }
     
     num = [0-9]+;
     
@@ -35,9 +28,12 @@ void lexer(char *p, char *pe) {
     char *eof = pe;
     char *ts, *te;
     int cs, act;
-    
+
+    void *yyp = ParseAlloc(malloc);
+
     %% write init;
     %% write exec;
     
-    Parse(parser, 0, 0, 0);
+    parser(yyp, 0, 0, 0);
+    parserFree(yyp, free);
 }

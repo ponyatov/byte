@@ -1,8 +1,8 @@
-.PHONY: install update
+.PHONY : install update ref gz
 install: doc ref gz
 	$(MAKE) update
-update:
+update :
 	sudo apt update
-	sudo apt install -uy `cat apt.Debian`
-ref: $(REF)
-gz:  $(GZ)
+	sudo apt install -uy `cat apt.Debian` $(APT)
+ref    : $(REF)
+gz     : $(GZ)

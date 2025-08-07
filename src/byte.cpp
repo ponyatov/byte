@@ -2,7 +2,6 @@
 
 int main(int argc, char *argv[]) {
     arg(0, argv[0]);
-    void *parser = ParseAlloc(malloc);
 
     for (int i = 1; i < argc; i++) {
         arg(i, argv[i]);
@@ -20,7 +19,6 @@ int main(int argc, char *argv[]) {
         close(fd);
         yyfile = nullptr;
     }
-    ParseFree(parser, free);
     return 0;
 }
 
