@@ -1,5 +1,4 @@
 #include "byte.hpp"
-#include "byte.h"
 
 %%{
     machine lexer;
