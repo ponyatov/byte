@@ -7,16 +7,16 @@
 %left ADD SUB.
 %left MUL DIV.
 
-%start_symbol grammar
+%type ID {std::string}
 
 grammar ::= stmts.
 
 stmts ::= stmts stmt.
 stmts ::= stmt.
 
-stmt ::= expr(A) EOL. { printf("=%d\n", A); }
-stmt ::= EOL. { printf("---eol---\n"); }
-stmt ::= END. { printf("---end---\n"); }
+stmt ::= expr(A) . { printf("=%d\n", A); }
+// stmt ::= EOL. { printf("---eol---\n"); }
+// stmt ::= END. { printf("---end---\n"); }
 
 expr(A) ::= LP expr(B) RP.       { A = B    ; }
 expr(A) ::= expr(B) ADD expr(C). { A = B + C; }
@@ -24,6 +24,10 @@ expr(A) ::= expr(B) SUB expr(C). { A = B - C; }
 expr(A) ::= expr(B) MUL expr(C). { A = B * C; }
 expr(A) ::= expr(B) DIV expr(C). { A = B / C; }
 expr(A) ::= NUM(B).              { A = B;     }
+
+stmt ::= label(L). { printf("label:%.4X\n",L); }
+
+label(L) ::= COLON ID(N). { label[N] = Cp; L = Cp; }
 
 %parse_accept {
     printf("parsing complete!\n");

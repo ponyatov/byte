@@ -3,6 +3,7 @@
 %%{
     machine lexer;
 
+    action eol { yyline++; yycol=1; }
     action abort {
         fprintf(stderr,"\n%s:%d:%d lexer:%c\n",yyfile,yyline,yycol,fc);
         exit(-1);
@@ -12,7 +13,7 @@
     line_comment = '//' [^\n]* '\n';
 
     block_comment := |*
-        '\n' => { yyline++; yycol=1;    };
+        '\n' => eol;
         '*/' => { yycol+=2; fgoto main; };
         any  => { yycol++ ;             };
     *|;
@@ -20,18 +21,19 @@
     num = [0-9]+;
     
     main := |*
-        '\n'         => { yyline++; yycol=1;   parser(yyp, EOL, 0); };
-        shebang      => { yycol += te-ts+2;                         };
-        line_comment => { yycol += te-ts+2;                         };
+        '\n'         => eol;
+        shebang      => { yycol += te-ts+2; };
+        line_comment => { yycol += te-ts+2; };
         '/*'         => { yycol+=2; fgoto block_comment; };
         '.end'       => { fbreak; };
-        num          => { parser(yyp, NUM, dec(ts,te)); yycol += te-ts; };
-        '+'          => { parser(yyp, ADD, 0         ); yycol++;        };
-        '-'          => { parser(yyp, SUB, 0         ); yycol++;        };
-        '*'          => { parser(yyp, MUL, 0         ); yycol++;        };
-        '/'          => { parser(yyp, DIV, 0         ); yycol++;        };
-        '('          => { parser(yyp, LP , 0         ); yycol++;        };
-        ')'          => { parser(yyp, RP , 0         ); yycol++;        };
+        num          => { parser(yyp, NUM  , dec(ts,te)); yycol += te-ts; };
+        '+'          => { parser(yyp, ADD  , 0         ); yycol++;        };
+        '-'          => { parser(yyp, SUB  , 0         ); yycol++;        };
+        '*'          => { parser(yyp, MUL  , 0         ); yycol++;        };
+        '/'          => { parser(yyp, DIV  , 0         ); yycol++;        };
+        '('          => { parser(yyp, LP   , 0         ); yycol++;        };
+        ')'          => { parser(yyp, RP   , 0         ); yycol++;        };
+        ':'          => { parser(yyp, COLON, 0         ); yycol++;        };
         space        => { yycol++; };
         any          => abort;
     *|;
@@ -50,8 +52,6 @@ void lexer(char *p, char *pe) {
     %% write init;
     %% write exec;
     
-    parser(yyp, EOL, 0);
-    parser(yyp, END, 0);
     parser(yyp, 0, 0);
     parserFree(yyp, free);
 }
