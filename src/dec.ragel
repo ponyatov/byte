@@ -1,3 +1,5 @@
+#include "byte.hpp"
+
 %%{
     machine dec;
 
@@ -10,10 +12,10 @@
 
 %% write data;
 
-int dec(char *ts, char *te) {
+Token dec(char *ts, char *te) {
     char *p = ts, *pe = te, *eof = pe; int act,cs = dec_start;
     int sign = 1; int res = 0;
     %% write init;
     %% write exec;
-    return sign * res;
+    return {n:sign * res};
 }

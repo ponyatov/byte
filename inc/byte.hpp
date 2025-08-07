@@ -30,14 +30,20 @@ extern void arg(int argc, char *argv);    ///< print command line argument
 /// @defgroup parser parser
 /// @ingroup compiler
 /// @{
+
+union Token {
+    int n;
+    // std::string *s;
+};
+
 extern void lexer(char *p, char *pe);  ///< lexer /ragel/
 extern char *yyfile;                   ///< current file name
 extern size_t yyline;                  ///< current line
 extern size_t yycol;                   ///< current column
-extern int dec(char *ts, char *te);    ///< sublexer for decimal integers
+extern Token dec(char *ts, char *te);  ///< sublexer for decimal integers
 #include "byte.lemon.hpp"
 
-#define parserTOKENTYPE int
+#define parserTOKENTYPE Token
 #define parserARG_PDECL
 #define parserCTX_PDECL
 
@@ -120,7 +126,7 @@ extern void lit();   ///< `( -- n )` push constant
 /// @defgroup compiler compiler
 /// @ingroup vm
 /// @{
-std::map<std::string, addr> label;  ///< known labels
+extern std::map<std::string *, addr> label;  ///< known labels
 /// @}
 
 /// @defgroup debug debug

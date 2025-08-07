@@ -27,13 +27,13 @@
         '/*'         => { yycol+=2; fgoto block_comment; };
         '.end'       => { fbreak; };
         num          => { parser(yyp, NUM  , dec(ts,te)); yycol += te-ts; };
-        '+'          => { parser(yyp, ADD  , 0         ); yycol++;        };
-        '-'          => { parser(yyp, SUB  , 0         ); yycol++;        };
-        '*'          => { parser(yyp, MUL  , 0         ); yycol++;        };
-        '/'          => { parser(yyp, DIV  , 0         ); yycol++;        };
-        '('          => { parser(yyp, LP   , 0         ); yycol++;        };
-        ')'          => { parser(yyp, RP   , 0         ); yycol++;        };
-        ':'          => { parser(yyp, COLON, 0         ); yycol++;        };
+        '+'          => { parser(yyp, ADD  , {n:0}         ); yycol++;        };
+        '-'          => { parser(yyp, SUB  , {n:0}         ); yycol++;        };
+        '*'          => { parser(yyp, MUL  , {n:0}         ); yycol++;        };
+        '/'          => { parser(yyp, DIV  , {n:0}         ); yycol++;        };
+        '('          => { parser(yyp, LP   , {n:0}         ); yycol++;        };
+        ')'          => { parser(yyp, RP   , {n:0}         ); yycol++;        };
+        ':'          => { parser(yyp, COLON, {n:0}         ); yycol++;        };
         space        => { yycol++; };
         any          => abort;
     *|;
@@ -52,7 +52,7 @@ void lexer(char *p, char *pe) {
     %% write init;
     %% write exec;
     
-    parser(yyp, 0, 0);
+    parser(yyp, 0, {n:0});
     parserFree(yyp, free);
 }
 
