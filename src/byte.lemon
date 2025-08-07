@@ -1,4 +1,7 @@
 %name parser
+
+%include { #include "byte.hpp" }
+
 %token_type {int}
 
 %left ADD SUB.
