@@ -49,8 +49,6 @@ void lexer(char *p, char *pe) {
     %% write exec;
     
     parser(yyp, END, 0);
-    parser(yyp, EOL, 0);
-    // parser(yyp, EOL, 0);
     parser(yyp, 0, 0);
     parserFree(yyp, free);
 }

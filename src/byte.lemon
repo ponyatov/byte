@@ -9,12 +9,14 @@
 
 %start_symbol grammar
 
-grammar ::= grammar stmt.
-grammar ::= stmt.
+grammar ::= stmts.
+
+stmts ::= stmts stmt.
+stmts ::= stmt.
 
 stmt ::= expr(A) EOL. { printf("=%d\n", A); }
-stmt ::= EOL. { printf("---eol---\n", A); }
-stmt ::= END. { printf("---end---\n", A); }
+stmt ::= EOL. { printf("---eol---\n"); }
+stmt ::= END. { printf("---end---\n"); }
 
 expr(A) ::= expr(B) ADD expr(C). { A = B + C; }
 expr(A) ::= expr(B) SUB expr(C). { A = B - C; }
