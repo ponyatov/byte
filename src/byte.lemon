@@ -18,6 +18,7 @@ stmt ::= expr(A) EOL. { printf("=%d\n", A); }
 stmt ::= EOL. { printf("---eol---\n"); }
 stmt ::= END. { printf("---end---\n"); }
 
+expr(A) ::= LP expr(B) RP.       { A = B    ; }
 expr(A) ::= expr(B) ADD expr(C). { A = B + C; }
 expr(A) ::= expr(B) SUB expr(C). { A = B - C; }
 expr(A) ::= expr(B) MUL expr(C). { A = B * C; }
