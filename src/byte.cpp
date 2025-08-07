@@ -12,10 +12,9 @@ int main(int argc, char *argv[]) {
         struct stat st;
         fstat(fd, &st);
         size_t size = st.st_size;
-        assert(size > 0);
         char *src = (char *)mmap(0, size, PROT_READ, MAP_PRIVATE, fd, 0);
 
-        fprintf(stderr, "%d bytes\n", size);
+        assert(size > 0);
         lexer(src, src + size);
 
         munmap(src, st.st_size);

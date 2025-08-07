@@ -2,9 +2,6 @@
 
 %%{
     machine lexer;
-
-    action skip  {}
-    action eol   { yyline++; yycol=1; }
     action abort {
         fprintf(stderr,"\n%s:%d:%d lexer:%c\n",yyfile,yyline,yycol,fc);
         exit(-1);
@@ -16,15 +13,15 @@
     num = [0-9]+;
     
     main := |*
-        '\n'         => {yyline++;};
-        shebang      => skip;
-        line_comment => skip;
-        num          => { parser(yyp, NUM, dec(ts,te)); };
-        '+'          => { parser(yyp, ADD, 0         ); };
-        '-'          => { parser(yyp, SUB, 0         ); };
-        '*'          => { parser(yyp, MUL, 0         ); };
-        '/'          => { parser(yyp, DIV, 0         ); };
-        space        => skip;
+        '\n'         => { yyline++; yycol=1; };
+        shebang      => {  yycol += te-ts+2; };
+        line_comment => {  yycol += te-ts+2; };
+        num          => { parser(yyp, NUM, dec(ts,te)); yycol += te-ts; };
+        '+'          => { parser(yyp, ADD, 0         ); yycol++;        };
+        '-'          => { parser(yyp, SUB, 0         ); yycol++;        };
+        '*'          => { parser(yyp, MUL, 0         ); yycol++;        };
+        '/'          => { parser(yyp, DIV, 0         ); yycol++;        };
+        space        => { yycol++; };
         any          => abort;
     *|;
 }%%
