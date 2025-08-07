@@ -1,22 +1,25 @@
 #include "byte.hpp"
 
+extern void lex_init();
+extern void lex_parse(char *data);
+extern void lex_free();
+
 int main(int argc, char *argv[]) {
-    arg(0, argv[0]);
-    for (int i = 1; i < argc; i++) {  //
-        arg(i, argv[i]);
+    void* parser = ParseAlloc(malloc);
+    
+    for (int i = 1; i < argc; i++) {
+        argv(i,argv[i]);
+        file = open(argv[i], O_RDONLY);
+        size = lseek(file, 0, SEEK_END);
+        char *src = memmep(file);
+        lexer(src,size);
+        munmap(src);
     }
+    
+    ParseFree(parser, free);
+    return 0;
 }
 
-//     void* pParser = ParseAlloc(malloc);
-    
-//     Parse(pParser, NUMBER, "42", 0);
-//     Parse(pParser, PLUS, 0, 0);
-//     Parse(pParser, NUMBER, "10", 0);
-//     Parse(pParser, 0, 0, 0);
-    
-//     ParseFree(pParser, free);
-
-
-void arg(int argc, char *argv) { //
+void arg(int argc, char *argv) {
     fprintf(stderr,"arg[%i] = <%s>\n",argc,argv);
 }

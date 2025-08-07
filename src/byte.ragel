@@ -1,23 +1,36 @@
+#include "byte.hpp"
+#include "byte.h"
+
 %%{
-    machine byte;
+    machine lexer;
     
-    action emit_id { printf("ID: %.*s\n", (int)(te-ts), ts); }
-    action emit_num { printf("NUM: %.*s\n", (int)(te-ts), ts); }
+    action emit_num { 
+        char *num = (char*)malloc(te-ts+1);
+        memcpy(num, ts, te-ts);
+        num[te-ts] = 0;
+        Parse(parser, NUM, num, 0);
+    }
+    action emit_add { Parse(parser, ADD, 0, 0); }
+    action emit_sub { Parse(parser, SUB, 0, 0); }
+    action emit_mul { Parse(parser, MUL, 0, 0); }
+    action emit_div { Parse(parser, DIV, 0, 0); }
     
-    id = [a-zA-Z_][a-zA-Z0-9_]*;
     num = [0-9]+;
-    ws = [ \t\n]+;
     
     main := |*
-        id => emit_id;
-        num => emit_num;
-        ws;
+        '\n'   => {yylineno++;};
+        num    => emit_num;
+        '+'    => emit_add;
+        '-'    => emit_sub;
+        '*'    => emit_mul;
+        '/'    => emit_div;
+        space  => {/* drop spaces */};
     *|;
 }%%
 
 %% write data;
 
-int lexer(char *p,char *pe) {
+void lexer(char *p, char *pe) {
     char *eof = pe;
     char *ts, *te;
     int cs, act;
@@ -25,5 +38,5 @@ int lexer(char *p,char *pe) {
     %% write init;
     %% write exec;
     
-    return 0;
+    Parse(parser, 0, 0, 0);
 }

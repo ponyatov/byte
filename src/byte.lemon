@@ -7,19 +7,8 @@
 
 program ::= expr(A). { printf("Result: %s\n", A); }
 
-expr(A) ::= expr(B) PLUS expr(C). { A = "add"; }
-expr(A) ::= expr(B) MINUS expr(C). { A = "sub"; }
-expr(A) ::= expr(B) TIMES expr(C). { A = "mul"; }
-expr(A) ::= expr(B) DIVIDE expr(C). { A = "div"; }
-expr(A) ::= NUMBER(B). { A = B; }
-
-%code {
-//     void* pParser = ParseAlloc(malloc);
-    
-//     Parse(pParser, NUMBER, "42", 0);
-//     Parse(pParser, PLUS, 0, 0);
-//     Parse(pParser, NUMBER, "10", 0);
-//     Parse(pParser, 0, 0, 0);
-    
-//     ParseFree(pParser, free);
-}
+expr(A) ::= expr(B) ADD expr(C). { A = "add"; }
+expr(A) ::= expr(B) SUB expr(C). { A = "sub"; }
+expr(A) ::= expr(B) MUL expr(C). { A = "mul"; }
+expr(A) ::= expr(B) DIV expr(C). { A = "div"; }
+expr(A) ::= NUM(B). { A = B; }
