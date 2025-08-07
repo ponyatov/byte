@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "byte.h"
-
 #ifdef LINUX
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -18,3 +16,6 @@ extern int main(int argc, char *argv[]);
 extern void arg(int argc, char *argv);
 
 extern void lexer(char *p, char *pe);
+extern char* yyfile;
+extern size_t yyline;
+#include "byte.lemon.hpp"

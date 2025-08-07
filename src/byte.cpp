@@ -6,6 +6,7 @@ int main(int argc, char *argv[]) {
 
     for (int i = 1; i < argc; i++) {
         arg(i, argv[i]);
+        yyfile = argv[i];
 
         int fd = open(argv[i], O_RDONLY);
         struct stat st;
@@ -17,6 +18,7 @@ int main(int argc, char *argv[]) {
 
         munmap(src, st.st_size);
         close(fd);
+        yyfile = nullptr;
     }
     ParseFree(parser, free);
     return 0;

@@ -18,7 +18,7 @@
     num = [0-9]+;
     
     main := |*
-        '\n'   => {yylineno++;};
+        '\n'   => {yyline++;};
         num    => emit_num;
         '+'    => emit_add;
         '-'    => emit_sub;
