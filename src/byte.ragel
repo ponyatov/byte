@@ -5,10 +5,11 @@
     machine lexer;
     
     action emit_num { 
-        char *num = (char*)malloc(te-ts+1);
-        memcpy(num, ts, te-ts);
-        num[te-ts] = 0;
-        Parse(parser, NUM, num, 0);
+        char num[0x10];
+        int len = te-ts;
+        memcpy(num, ts, len);
+        num[len] = 0;
+        Parse(parser, NUMBER, atoi(num), 0);
     }
     action emit_add { Parse(parser, ADD, 0, 0); }
     action emit_sub { Parse(parser, SUB, 0, 0); }
