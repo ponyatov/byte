@@ -8,11 +8,14 @@ int main(int argc, char *argv[]) {
         yyfile = argv[i];
 
         int fd = open(argv[i], O_RDONLY);
+        assert(fd > 0);
         struct stat st;
-        size_t size = st.st_size;
         fstat(fd, &st);
+        size_t size = st.st_size;
+        assert(size > 0);
         char *src = (char *)mmap(0, size, PROT_READ, MAP_PRIVATE, fd, 0);
 
+        fprintf(stderr, "%d bytes\n", size);
         lexer(src, src + size);
 
         munmap(src, st.st_size);

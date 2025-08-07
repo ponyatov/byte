@@ -2,23 +2,30 @@
 
 %%{
     machine lexer;
-    
-    action emit_num { parse(yyp, NUM, dec(ts,te), 0); }
-    action emit_add { parse(yyp, ADD, 0         , 0); }
-    action emit_sub { parse(yyp, SUB, 0         , 0); }
-    action emit_mul { parse(yyp, MUL, 0         , 0); }
-    action emit_div { parse(yyp, DIV, 0         , 0); }
-    
+
+    action skip  {}
+    action eol   { yyline++; yycol=1; }
+    action abort {
+        fprintf(stderr,"\n%s:%d:%d lexer:%c\n",yyfile,yyline,yycol,fc);
+        exit(-1);
+    }
+
+    shebang      = '#!' [^\n]*;
+    line_comment = '//' [^\n]*;
+
     num = [0-9]+;
     
     main := |*
-        '\n'   => {yyline++;};
-        num    => emit_num;
-        '+'    => emit_add;
-        '-'    => emit_sub;
-        '*'    => emit_mul;
-        '/'    => emit_div;
-        space  => {/* drop spaces */};
+        '\n'         => {yyline++;};
+        shebang      => skip;
+        line_comment => skip;
+        num          => { parser(yyp, NUM, dec(ts,te)); };
+        '+'          => { parser(yyp, ADD, 0         ); };
+        '-'          => { parser(yyp, SUB, 0         ); };
+        '*'          => { parser(yyp, MUL, 0         ); };
+        '/'          => { parser(yyp, DIV, 0         ); };
+        space        => skip;
+        any          => abort;
     *|;
 }%%
 
@@ -29,11 +36,16 @@ void lexer(char *p, char *pe) {
     char *ts, *te;
     int cs, act;
 
-    void *yyp = ParseAlloc(malloc);
+    void *yyp = parserAlloc(malloc);
+    yyline = 1; yycol = 1;
 
     %% write init;
     %% write exec;
     
-    parser(yyp, 0, 0, 0);
+    parser(yyp, 0, 0);
     parserFree(yyp, free);
 }
+
+char *yyfile = nullptr;;
+size_t yyline = 1;
+size_t yycol  = 1;

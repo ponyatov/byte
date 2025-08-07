@@ -1,14 +1,10 @@
 %%{
     machine dec;
 
-    digits := |*
-        digit => { res = res * 10 + (fc - '0'); };
-    *|;
-
     main := |*
         '+'   => { sign = +1; };
         '-'   => { sign = -1; };
-        digit => { res = fc - '0'; fcall digits; };
+        digit => { res = res * 10 + (fc - '0'); };
     *|;
 }%%
 
