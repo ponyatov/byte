@@ -1,0 +1,29 @@
+%%{
+    machine byte;
+    
+    action emit_id { printf("ID: %.*s\n", (int)(te-ts), ts); }
+    action emit_num { printf("NUM: %.*s\n", (int)(te-ts), ts); }
+    
+    id = [a-zA-Z_][a-zA-Z0-9_]*;
+    num = [0-9]+;
+    ws = [ \t\n]+;
+    
+    main := |*
+        id => emit_id;
+        num => emit_num;
+        ws;
+    *|;
+}%%
+
+%% write data;
+
+int lexer(char *p,char *pe) {
+    char *eof = pe;
+    char *ts, *te;
+    int cs, act;
+    
+    %% write init;
+    %% write exec;
+    
+    return 0;
+}
