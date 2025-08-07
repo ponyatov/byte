@@ -1,5 +1,9 @@
 #include "byte.hpp"
 
+std::string* str(char *ts,char *te) {
+    return new std::string(ts,te);
+}
+
 %%{
     machine lexer;
 
@@ -19,21 +23,24 @@
     *|;
 
     num = [0-9]+;
+
+    id  = [a-z_][a-z_0-9]*;
     
     main := |*
         '\n'         => eol;
-        shebang      => { yycol += te-ts+2; };
-        line_comment => { yycol += te-ts+2; };
+        shebang      => eol;
+        line_comment => eol;
         '/*'         => { yycol+=2; fgoto block_comment; };
         '.end'       => { fbreak; };
-        num          => { parser(yyp, NUM  , dec(ts,te)); yycol += te-ts; };
-        '+'          => { parser(yyp, ADD  , {n:0}         ); yycol++;        };
-        '-'          => { parser(yyp, SUB  , {n:0}         ); yycol++;        };
-        '*'          => { parser(yyp, MUL  , {n:0}         ); yycol++;        };
-        '/'          => { parser(yyp, DIV  , {n:0}         ); yycol++;        };
-        '('          => { parser(yyp, LP   , {n:0}         ); yycol++;        };
-        ')'          => { parser(yyp, RP   , {n:0}         ); yycol++;        };
-        ':'          => { parser(yyp, COLON, {n:0}         ); yycol++;        };
+        num          => { parser(yyp, NUM  , {n:dec(ts,te)}); yycol += te-ts; };
+        '+'          => { parser(yyp, ADD  , {t:ADD}         ); yycol++;        };
+        '-'          => { parser(yyp, SUB  , {t:SUB}         ); yycol++;        };
+        '*'          => { parser(yyp, MUL  , {t:MUL}         ); yycol++;        };
+        '/'          => { parser(yyp, DIV  , {t:DIV}         ); yycol++;        };
+        '('          => { parser(yyp, LP   , {t:LP }         ); yycol++;        };
+        ')'          => { parser(yyp, RP   , {t:RP }         ); yycol++;        };
+        ':'          => { parser(yyp, COLON, {t:COLON}       ); yycol++;        };
+        id           => { parser(yyp, ID   , {s:str(ts,te)}  ); yycol += te-ts; };
         space        => { yycol++; };
         any          => abort;
     *|;
@@ -52,7 +59,7 @@ void lexer(char *p, char *pe) {
     %% write init;
     %% write exec;
     
-    parser(yyp, 0, {n:0});
+    parser(yyp, 0, {t:0});
     parserFree(yyp, free);
 }
 

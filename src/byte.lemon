@@ -13,7 +13,7 @@ grammar ::= stmts.
 stmts ::= stmts stmt.
 stmts ::= stmt.
 
-stmt ::= expr(A) . { printf("=%d\n", A.n); }
+stmt ::= expr(A) . { C(Op::lit); C(A.n); }
 // stmt ::= EOL. { printf("---eol---\n"); }
 // stmt ::= END. { printf("---end---\n"); }
 
@@ -24,12 +24,10 @@ expr(A) ::= expr(B) MUL expr(C). { A.n = B.n * C.n; }
 expr(A) ::= expr(B) DIV expr(C). { A.n = B.n / C.n; }
 expr(A) ::= NUM(B).              { A.n = B.n      ; }
 
-stmt ::= label(L). { printf("label:%.4X\n",L.n); }
-
-label(L) ::= COLON ID. { L.n = Cp; }
+stmt ::= COLON ID(S). { printf("label[%s] = %.4X\n",S.s->c_str(),Cp); }
 
 %parse_accept {
-    printf("parsing complete!\n");
+    dump();
 }
 
 %syntax_error {

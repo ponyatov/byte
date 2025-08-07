@@ -32,15 +32,17 @@ extern void arg(int argc, char *argv);    ///< print command line argument
 /// @{
 
 union Token {
-    int n;
-    // std::string *s;
+    int t;           ///< token id
+    int n;           ///< integer value (optional)
+    std::string *s;  ///< string value(optional)
 };
 
-extern void lexer(char *p, char *pe);  ///< lexer /ragel/
-extern char *yyfile;                   ///< current file name
-extern size_t yyline;                  ///< current line
-extern size_t yycol;                   ///< current column
-extern Token dec(char *ts, char *te);  ///< sublexer for decimal integers
+extern void lexer(char *p, char *pe);         ///< lexer /ragel/
+extern char *yyfile;                          ///< current file name
+extern size_t yyline;                         ///< current line
+extern size_t yycol;                          ///< current column
+extern int dec(char *ts, char *te);           ///< sublexer for decimal integers
+extern std::string *str(char *ts, char *te);  ///< short string.new
 #include "byte.lemon.hpp"
 
 #define parserTOKENTYPE Token
@@ -111,7 +113,9 @@ enum class Op : byte {
     jz = 0x02,    ///< `02` `( flag -- )` jump if false
     call = 0x03,  ///< `03` `(R: -- addr )` nested call
     ret = 0x04,   ///< `04` `(R: addr -- )` return from @ref call
-    lit = 0x05,   ///< `05` `( -- n )` push constant
+    lit = 0x05,   ///< `05` `( -- i32 )` push @ref cell
+    lita,         ///< `06` `( -- addr )` push @ref addr
+    litb,         ///< `07` `( -- byte )` push @ref byte
 };
 
 extern void nop();   ///< `( -- )` do nothing
@@ -127,6 +131,9 @@ extern void lit();   ///< `( -- n )` push constant
 /// @ingroup vm
 /// @{
 extern std::map<std::string *, addr> label;  ///< known labels
+
+extern addr C(Op op);  ///< compile @ref Op
+extern addr C(int n);  ///< compile integer
 /// @}
 
 /// @defgroup debug debug
@@ -134,4 +141,5 @@ extern std::map<std::string *, addr> label;  ///< known labels
 /// @{
 extern bool trace;  ///< trace flag
 
+extern void dump();  ///< dump @ref M
 /// @}
